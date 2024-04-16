@@ -1,10 +1,11 @@
-import * as ExpoWebMaps from "expo-web-maps";
-import { StyleSheet, Text, View } from "react-native";
+import MapView from "expo-web-maps";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>{ExpoWebMaps.hello()}</Text>
+      <MapView />
     </View>
   );
 }
