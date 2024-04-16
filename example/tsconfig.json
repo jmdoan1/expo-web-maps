@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "expo-web-maps": ["../src/index"],
+      "expo-web-maps/*": ["../src/*"]
+    }
+  }
+}
