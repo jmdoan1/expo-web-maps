@@ -1,6 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-
-import * as ExpoWebMaps from 'expo-web-maps';
+import * as ExpoWebMaps from "expo-web-maps";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function App() {
   return (
@@ -13,8 +12,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
