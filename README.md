@@ -25,6 +25,8 @@ npm i
 cd example #if necessary
 npx expo start --web
 ```
+- Play around in the `example/App.tsx` file
+  - All props are currently utilized in the example except for `style`
 
 # TODO
 - fix callouts not displaying when map clicked
