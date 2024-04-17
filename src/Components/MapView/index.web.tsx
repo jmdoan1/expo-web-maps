@@ -67,25 +67,24 @@ export default function MapView({
                     });
                     markers.push(marker${index});
                     
-                    // Create info window for each marker
                     var infoWindow${index} = new google.maps.InfoWindow({
                         content: "<b>${obj.title}</b><br/>${obj.description}"
                     });
                     infoWindows.push(infoWindow${index});
                     
-                    // Add click event listener to show info window when marker is tapped
                     marker${index}.addListener("click", function () {
+                        
                       if (currentInfoWindow) {
                         currentInfoWindow.close();
                       }
+                      
                       currentInfoWindow = infoWindow${index};
-                      infoWindow${index}.open(map, marker${index});
+                      infoWindow${index}.open({anchor: marker${index}, map});
                       window.parent.postMessage(${index}, "*");
                     });
                     `
                   )
                   .join("")}
-                }
 
                 map.addEventListener("click", function () {
                   if (currentInfoWindow) {
@@ -114,10 +113,10 @@ export default function MapView({
                   }
                   
                 });
-            //   }
+              }
           
               // Load Google Maps JavaScript API dynamically
-              function loadGoogleMapsScript() {
+              async function loadGoogleMapsScript() {
                 var script = document.createElement("script");
                 script.src = "https://maps.googleapis.com/maps/api/js?key=${
                   Constants.manifest.web.config.googleMapsApiKey
