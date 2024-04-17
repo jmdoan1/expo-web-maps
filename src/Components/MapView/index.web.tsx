@@ -86,13 +86,13 @@ export default function MapView({
                   )
                   .join("")}
 
-                map.addEventListener("click", function () {
+                map.addListener("click", function () {
                   if (currentInfoWindow) {
                     currentInfoWindow.close();
                   }
                 });
 
-                map.addEventListener("tilesloaded", function () {
+                map.addListener("tilesloaded", function () {
                   window.parent.postMessage("initialInfoWindow", "*");
                 });
                 
