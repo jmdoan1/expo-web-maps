@@ -5,7 +5,11 @@ import { StyleSheet, View } from "react-native";
 export default function App() {
   return (
     <View style={styles.container}>
-      <MapView />
+      <MapView
+        mapId="mapId"
+        center={{ latitude: 34.1341, longitude: -118.3215 }}
+        zoom={15}
+      />
     </View>
   );
 }
