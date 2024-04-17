@@ -1,22 +1,19 @@
 import { StyleProp, ViewStyle } from "react-native";
 
 export interface MapViewProps {
-  mapId: string;
-  style: StyleProp<ViewStyle>;
+  // https://developers.google.com/maps/documentation/javascript/advanced-markers/start#create_a_map_id
+  // mapId: string;
+  style?: StyleProp<ViewStyle>;
   center?: {
     latitude: number;
     longitude: number;
   };
   zoom?: number;
   markers?: {
-    // id: string;
-    name: string;
+    title?: string;
+    description?: string;
     latitude: number;
     longitude: number;
-    annotation?: {
-      header: string;
-      info: string;
-    };
   }[];
 }
 

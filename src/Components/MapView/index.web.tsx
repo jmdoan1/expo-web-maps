@@ -5,7 +5,6 @@ import { View } from "react-native";
 import { MapViewProps } from "../../ExpoWebMaps.types";
 
 export default function MapView({
-  mapId,
   style,
   center,
   zoom,
@@ -46,7 +45,7 @@ export default function MapView({
                   },
                   zoom: ${zoom ?? 7},
                   fullscreenControl: false,
-                  mapId: "${mapId}",
+                  mapId: "${Constants.manifest.web.config.googleMapId}",
                 });
 
                 const bounds = new google.maps.LatLngBounds();
@@ -59,18 +58,18 @@ export default function MapView({
                     (obj, index) => `
                     const latLng${index} = { lat: ${obj.latitude}, lng: ${obj.longitude} };
 
-                    bounds.extend(latLng${index});
+                    // bounds.extend(latLng${index});
                 
                     var marker${index} = new AdvancedMarkerElement({
                       position: latLng${index},
                       map: map,
-                      title: "${obj.name}",
+                      title: "${obj.title}",
                     });
                     markers.push(marker${index});
                     
                     // Create info window for each marker
                     var infoWindow${index} = new google.maps.InfoWindow({
-                        content: "<b>${obj.annotation?.header}</b><br/>${obj.annotation?.info}"
+                        content: "<b>${obj.title}</b><br/>${obj.description}"
                     });
                     infoWindows.push(infoWindow${index});
                     

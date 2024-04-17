@@ -6,9 +6,16 @@ export default function App() {
   return (
     <View style={styles.container}>
       <MapView
-        mapId="mapId"
         center={{ latitude: 34.1341, longitude: -118.3215 }}
         zoom={15}
+        markers={[
+          {
+            latitude: 34.1341,
+            longitude: -118.3215,
+            title: "Hollywood Sign",
+            description: "Yes, the one you see in movies",
+          },
+        ]}
       />
     </View>
   );
