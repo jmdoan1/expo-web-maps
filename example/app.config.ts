@@ -18,7 +18,7 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "expo.modules.webmaps.example",
-      config: { googleMapsApiKey: "Key1" },
+      config: { googleMapsApiKey: process.env.IOS_GOOGLE_MAPS_API_KEY },
     },
     android: {
       adaptiveIcon: {
@@ -26,12 +26,14 @@ export default {
         backgroundColor: "#ffffff",
       },
       package: "expo.modules.webmaps.example",
-      config: { googleMaps: { apiKey: "Key2" } },
+      config: {
+        googleMaps: { apiKey: process.env.ANDROID_GOOGLE_MAPS_API_KEY },
+      },
     },
     web: {
       favicon: "./assets/favicon.png",
       config: {
-        googleMapsApiKey: process.env.WEB_GOOGLE_MAPS_KEY,
+        googleMapsApiKey: process.env.WEB_GOOGLE_MAPS_API_KEY,
         googleMapId: process.env.WEB_GOOGLE_MAPS_ID,
       },
     },

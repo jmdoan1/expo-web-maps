@@ -28,7 +28,10 @@
   "author": "Jay Doan <jay@doan.works> (https://github.com/jmdoan1)",
   "license": "MIT",
   "homepage": "https://github.com/jmdoan1/expo-web-maps#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@types/react-native-maps": "^0.24.2",
+    "react-native-maps": "1.10.0"
+  },
   "devDependencies": {
     "@types/react": "^18.0.25",
     "expo-module-scripts": "^3.4.1",
