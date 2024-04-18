@@ -13,7 +13,7 @@ export default function App() {
             latitude: 34.1341,
             longitude: -118.3215,
             title: "Hollywood Sign",
-            description: "Yes, the one you see in movies",
+            description: "As seen on TV",
           },
         ]}
       />

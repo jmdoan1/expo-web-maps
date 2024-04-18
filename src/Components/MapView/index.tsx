@@ -22,7 +22,7 @@ export default function MapView(props: MapViewProps) {
   return (
     <RNMapView
       style={{ width: "100%", height: "100%" }}
-      // provider={PROVIDER_GOOGLE}
+      provider={PROVIDER_GOOGLE}
       initialRegion={
         props.center
           ? {

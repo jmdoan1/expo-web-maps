@@ -45,7 +45,7 @@ export default function MapView({
                   },
                   zoom: ${zoom ?? 7},
                   fullscreenControl: false,
-                  mapId: "${Constants.manifest.web.config.googleMapId}",
+                  mapId: "${Constants.expoConfig?.web?.config?.googleMapId}",
                 });
 
                 const bounds = new google.maps.LatLngBounds();
@@ -119,7 +119,7 @@ export default function MapView({
               async function loadGoogleMapsScript() {
                 var script = document.createElement("script");
                 script.src = "https://maps.googleapis.com/maps/api/js?key=${
-                  Constants.manifest.web.config.googleMapsApiKey
+                  Constants.expoConfig?.web?.config?.googleMapsApiKey
                 }&callback=initMap";
                 script.defer = true;
                 document.head.appendChild(script);
