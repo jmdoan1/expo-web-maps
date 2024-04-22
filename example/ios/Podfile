@@ -43,6 +43,8 @@ target 'expowebmapsexample' do
   pod 'react-native-google-maps', :path => rn_maps_path
   config = use_native_modules!
 
+  pod 'react-native-config/Extension', :path => '../node_modules/react-native-config'
+
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
   use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']
 
