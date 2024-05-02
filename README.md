@@ -24,7 +24,7 @@ cd example
 npm i
 ```
 
-- create a `.env.local` file in the example folder and copy over the placeholders from `.envexample`
+- create a `.env` file in the example folder and copy over the placeholders from `.envexample`
 - Add your own google maps js api key: https://developers.google.com/maps/documentation/javascript/get-api-key
 - Add your own map id: https://developers.google.com/maps/documentation/javascript/advanced-markers/start#create_a_map_id
 - From the example folder, run the project on web

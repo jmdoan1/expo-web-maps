@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
@@ -92,6 +93,8 @@ android {
         versionName "1.0.0"
 
         buildConfigField("boolean", "REACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS", (findProperty("reactNative.unstable_useRuntimeSchedulerAlways") ?: true).toString())
+        resValue "string", "build_config_package", "expo.modules.webmaps.example"
+        resValue "string", "ANDROID_GOOGLE_MAPS_API_KEY", project.env.get("ANDROID_GOOGLE_MAPS_API_KEY")
     }
     signingConfigs {
         debug {
