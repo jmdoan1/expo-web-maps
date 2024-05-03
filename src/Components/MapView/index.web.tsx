@@ -1,16 +1,37 @@
 import Constants from "expo-constants";
 import React, { useRef, useState } from "react";
 import { View } from "react-native";
-
-import { MapViewProps } from "../../ExpoWebMaps.types";
+import { LatLng, MapViewProps } from "react-native-maps";
 
 export default function MapView({
   style,
-  center,
-  zoom,
-  markers,
+  camera, // overrides region
+  compassOffset,
+  customMapStyle, //Map ID?
+  initialCamera,
+  initialRegion,
+  kmlSrc, //???
+  googleMapId,
+  loadingBackgroundColor,
+  loadingEnabled,
+  loadingIndicatorColor,
+  mapPadding,
+  mapType,
+  maxZoomLevel,
+  minZoomLevel,
+  moveOnMarkerPress,
+  onCalloutPress,
+  onDoublePress,
+  onIndoorBuildingFocused,
+  onIndoorLevelActivated,
 }: MapViewProps) {
   const [height, setHeight] = useState(0);
+  const [center, setCenter] = useState<LatLng | undefined>({
+    latitude: 34.1341,
+    longitude: -118.3215,
+  });
+  const [markers, setMarkers] =
+    useState<(LatLng & { title: string; description; string })[]>();
 
   const frameRef = useRef<HTMLIFrameElement>(null);
 
@@ -40,12 +61,14 @@ export default function MapView({
 
                 var map = new Map(document.getElementById("map"), {
                   ${
-                    center &&
-                    `center: { lat: ${center.latitude}, lng: ${center.longitude} }`
-                  },
-                  zoom: ${zoom ?? 7},
+                    center
+                      ? `center: { lat: ${center.latitude}, lng: ${center.longitude} },`
+                      : ""
+                  }
+                  zoom: ${12},
                   fullscreenControl: false,
-                  mapId: "${Constants.expoConfig?.web?.config?.googleMapId}",
+                  ${(customMapStyle ?? []).length < 1 ? `mapId: '${googleMapId}',` : ""}
+                  styles: ${JSON.stringify(customMapStyle)},
                 });
 
                 const bounds = new google.maps.LatLngBounds();
