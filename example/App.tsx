@@ -6,17 +6,19 @@ export default function App() {
   return (
     <View style={styles.container}>
       <MapView
-        googleMapId="8e0a97af9386fef"
-        // center={{ latitude: 34.1341, longitude: -118.3215 }}
-        // zoom={15}
-        // markers={[
-        //   {
-        //     latitude: 34.1341,
-        //     longitude: -118.3215,
-        //     title: "Hollywood Sign",
-        //     description: "As seen on TV",
-        //   },
-        // ]}
+        googleMapId="90f87356969d889c"
+        initialCamera={{
+          center: {
+            // latitude: 34.1341,
+            // longitude: -118.3215,
+            latitude: 30.3322,
+            longitude: -81.6557,
+          },
+          heading: 90,
+          pitch: 90,
+          zoom: 16,
+        }}
+        mapType="hybrid"
       />
     </View>
   );

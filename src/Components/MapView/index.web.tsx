@@ -1,13 +1,16 @@
 import Constants from "expo-constants";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { LatLng, MapViewProps } from "react-native-maps";
 
+import { getZoomFromDelta } from "../../Util/ZoomDelta";
+
 export default function MapView({
   style,
-  camera, // overrides region
+  camera,
+  children,
   compassOffset,
-  customMapStyle, //Map ID?
+  customMapStyle,
   initialCamera,
   initialRegion,
   kmlSrc, //???
@@ -24,16 +27,66 @@ export default function MapView({
   onDoublePress,
   onIndoorBuildingFocused,
   onIndoorLevelActivated,
+  onKmlReady,
+  onLongPress,
+  onMapLoaded,
+  onMapReady,
+  onMarkerDrag,
+  onMarkerDragEnd,
+  onMarkerDragStart,
+  onMarkerPress,
+  onPanDrag,
+  onPoiClick,
+  onPress,
+  onRegionChange,
+  onRegionChangeComplete,
+  onUserLocationChange,
+  pitchEnabled,
+  region,
+  rotateEnabled,
+  scrollDuringRotateOrZoomEnabled,
+  scrollEnabled,
+  showsBuildings,
+  showsCompass,
+  showsIndoorLevelPicker,
+  showsIndoors,
+  showsMyLocationButton,
+  showsTraffic, // iOS only maybe
+  showsUserLocation,
+  zoomControlEnabled,
+  zoomEnabled,
+  zoomTapEnabled,
 }: MapViewProps) {
   const [height, setHeight] = useState(0);
-  const [center, setCenter] = useState<LatLng | undefined>({
-    latitude: 34.1341,
-    longitude: -118.3215,
-  });
+  const [center, setCenter] = useState<LatLng | undefined>();
+  const [heading, setHeading] = useState<number | undefined>();
+  const [zoom, setZoom] = useState<number | undefined>();
+  const [pitch, setPitch] = useState<number | undefined>();
+  const [altitude, setAltitude] = useState<number | undefined>();
   const [markers, setMarkers] =
     useState<(LatLng & { title: string; description; string })[]>();
 
   const frameRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const cameraValue = camera ?? region ?? initialCamera ?? initialRegion;
+    console.log("CAMERA VALUE:", cameraValue);
+    if (cameraValue) {
+      if ("center" in cameraValue) {
+        setCenter(cameraValue.center);
+        setHeading(cameraValue.heading);
+        setZoom(cameraValue.zoom);
+        setPitch(cameraValue.pitch);
+        setAltitude(cameraValue.altitude);
+      } else {
+        setCenter({
+          latitude: cameraValue.latitude,
+          longitude: cameraValue.longitude,
+        });
+        setZoom(getZoomFromDelta(cameraValue.latitudeDelta));
+      }
+    }
+  }, [camera, region, initialCamera, initialRegion]);
 
   return (
     <View
@@ -65,11 +118,16 @@ export default function MapView({
                       ? `center: { lat: ${center.latitude}, lng: ${center.longitude} },`
                       : ""
                   }
-                  zoom: ${12},
+                  zoom: ${zoom ?? 5},
+                  ${heading ? `heading: ${heading},` : ""}
+                  ${altitude ? `altitude: ${altitude},` : ""}
+                  ${pitch ? `tilt: ${pitch},` : ""}
                   fullscreenControl: false,
                   ${(customMapStyle ?? []).length < 1 ? `mapId: '${googleMapId}',` : ""}
                   styles: ${JSON.stringify(customMapStyle)},
                 });
+
+                ${mapType ? `map.setMapTypeId('${mapType}');` : ""}
 
                 const bounds = new google.maps.LatLngBounds();
 
