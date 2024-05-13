@@ -7,7 +7,7 @@ export default function App() {
     <View style={styles.container}>
       <MapView
         style={{ height: "100%", width: "100%" }}
-        googleMapId="90f87356969d889c"
+        googleMapId="8e0a97af9386fef"
         initialCamera={{
           center: {
             // latitude: 34.1341,

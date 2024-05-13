@@ -1,11 +1,10 @@
 import Constants from "expo-constants";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import { LatLng, MapMarkerProps, MapViewProps } from "react-native-maps";
+import { LatLng, MapViewProps } from "react-native-maps";
 
-import { getZoomFromDelta } from "../../Util/ZoomDelta";
-import { MapMarker } from "../..";
 import { getMapMarkerString } from "../../Util/ComponentStrings";
+import { getZoomFromDelta } from "../../Util/ZoomDelta";
 
 export default function MapView({
   style,
@@ -16,7 +15,7 @@ export default function MapView({
   initialCamera,
   initialRegion,
   kmlSrc, //???
-  googleMapId,
+  googleMapId, // Required if using markers, overrides customMapStyle
   loadingBackgroundColor,
   loadingEnabled,
   loadingIndicatorColor,
@@ -136,8 +135,9 @@ export default function MapView({
                   ${heading !== undefined ? `heading: ${-360 + heading},` : ""}
                   ${altitude !== undefined ? `altitude: ${altitude},` : ""}
                   ${pitch !== undefined ? `tilt: ${pitch},` : ""}
-                  fullscreenControl: false,
-                  ${(customMapStyle ?? []).length < 1 ? `mapId: "${googleMapId}",` : `styles: ${JSON.stringify(customMapStyle)},`}
+                  // fullscreenControl: false,
+                  ${googleMapId ? `mapId: "${googleMapId}",` : ""}
+                  ${(customMapStyle ?? []).length > 0 ? `styles: ${JSON.stringify(customMapStyle)},` : ""}
                 });
 
                 ${mapType ? `map.setMapTypeId('${mapType}');` : ""}
