@@ -133,12 +133,11 @@ export default function MapView({
                       : ""
                   }
                   zoom: ${zoom ?? 5},
-                  ${heading ? `heading: ${heading},` : ""}
-                  ${altitude ? `altitude: ${altitude},` : ""}
-                  ${pitch ? `tilt: ${pitch},` : ""}
+                  ${heading !== undefined ? `heading: ${-360 + heading},` : ""}
+                  ${altitude !== undefined ? `altitude: ${altitude},` : ""}
+                  ${pitch !== undefined ? `tilt: ${pitch},` : ""}
                   fullscreenControl: false,
-                  ${(customMapStyle ?? []).length < 1 ? `mapId: '${googleMapId}',` : ""}
-                  styles: ${JSON.stringify(customMapStyle)},
+                  ${(customMapStyle ?? []).length < 1 ? `mapId: "${googleMapId}",` : `styles: ${JSON.stringify(customMapStyle)},`}
                 });
 
                 ${mapType ? `map.setMapTypeId('${mapType}');` : ""}

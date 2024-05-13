@@ -105,7 +105,5 @@ infoWindows.push(infoWindow${index});
     }
   });
 
-  console.log("RESPONSE:");
-  console.log(response);
   return response;
 }
