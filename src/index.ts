@@ -6,10 +6,12 @@ import {
 
 // Import the native module. On web, it will be resolved to ExpoWebMaps.web.ts
 // and on native platforms to ExpoWebMaps.ts
+import Callout from "./Components/Callout";
+import MapView from "./Components/MapView";
+import MapMarker from "./Components/Marker";
+import { ChangeEventPayload, ExpoWebMapsViewProps } from "./ExpoWebMaps.types";
 import ExpoWebMapsModule from "./ExpoWebMapsModule";
 import ExpoWebMapsView from "./ExpoWebMapsView";
-import { ChangeEventPayload, ExpoWebMapsViewProps } from "./ExpoWebMaps.types";
-import MapView from "./Components/MapView";
 
 // Get the native constant value.
 export const PI = ExpoWebMapsModule.PI;
@@ -33,5 +35,10 @@ export function addChangeListener(
 }
 
 export { ExpoWebMapsView, ExpoWebMapsViewProps, ChangeEventPayload };
+
+export declare const PROVIDER_DEFAULT: undefined;
+export declare const PROVIDER_GOOGLE = "google";
+
+export { MapMarker, Callout };
 
 export default MapView;

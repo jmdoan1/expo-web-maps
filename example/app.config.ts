@@ -34,7 +34,6 @@ export default {
       favicon: "./assets/favicon.png",
       config: {
         googleMapsApiKey: process.env.WEB_GOOGLE_MAPS_API_KEY,
-        googleMapId: process.env.WEB_GOOGLE_MAPS_ID,
       },
     },
   },

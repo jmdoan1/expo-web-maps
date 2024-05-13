@@ -1,4 +1,4 @@
-import MapView from "expo-web-maps";
+import MapView, { Callout, MapMarker } from "expo-web-maps";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -6,6 +6,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <MapView
+        style={{ height: "100%", width: "100%" }}
         googleMapId="90f87356969d889c"
         initialCamera={{
           center: {
@@ -18,8 +19,32 @@ export default function App() {
           pitch: 90,
           zoom: 16,
         }}
-        mapType="hybrid"
-      />
+        provider="google"
+        // mapType="hybrid"
+      >
+        <MapMarker
+          id="1"
+          coordinate={{
+            latitude: 30.3322,
+            longitude: -81.6557,
+          }}
+          title="Broseph"
+          // description="wassup"
+        >
+          <Callout>
+            <View style={{ backgroundColor: "red", width: 250, height: 250 }} />
+          </Callout>
+        </MapMarker>
+        <MapMarker
+          id="2"
+          coordinate={{
+            latitude: 30.332,
+            longitude: -81.655,
+          }}
+          title="Wassup"
+          // description="bro"
+        />
+      </MapView>
     </View>
   );
 }

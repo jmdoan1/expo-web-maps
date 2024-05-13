@@ -1,9 +1,11 @@
 import Constants from "expo-constants";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import { LatLng, MapViewProps } from "react-native-maps";
+import { LatLng, MapMarkerProps, MapViewProps } from "react-native-maps";
 
 import { getZoomFromDelta } from "../../Util/ZoomDelta";
+import { MapMarker } from "../..";
+import { getMapMarkerString } from "../../Util/ComponentStrings";
 
 export default function MapView({
   style,
@@ -63,14 +65,12 @@ export default function MapView({
   const [zoom, setZoom] = useState<number | undefined>();
   const [pitch, setPitch] = useState<number | undefined>();
   const [altitude, setAltitude] = useState<number | undefined>();
-  const [markers, setMarkers] =
-    useState<(LatLng & { title: string; description; string })[]>();
 
   const frameRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     const cameraValue = camera ?? region ?? initialCamera ?? initialRegion;
-    console.log("CAMERA VALUE:", cameraValue);
+
     if (cameraValue) {
       if ("center" in cameraValue) {
         setCenter(cameraValue.center);
@@ -86,7 +86,21 @@ export default function MapView({
         setZoom(getZoomFromDelta(cameraValue.latitudeDelta));
       }
     }
-  }, [camera, region, initialCamera, initialRegion]);
+  }, [camera, region]);
+
+  const getMarkers = useCallback(() => {
+    let result = "";
+
+    React.Children.forEach(children, (child, index) => {
+      if (child && child["type"] && child["type"]["name"]) {
+        if (child["type"]["name"] === "MapMarker") {
+          result = result + getMapMarkerString(child, index);
+        }
+      }
+    });
+
+    return result;
+  }, [children]);
 
   return (
     <View
@@ -131,41 +145,10 @@ export default function MapView({
 
                 const bounds = new google.maps.LatLngBounds();
 
-                var markers = [];
+                // var markers = [];
                 var infoWindows = [];
-          
-                ${(markers ?? [])
-                  .map(
-                    (obj, index) => `
-                    const latLng${index} = { lat: ${obj.latitude}, lng: ${obj.longitude} };
 
-                    // bounds.extend(latLng${index});
-                
-                    var marker${index} = new AdvancedMarkerElement({
-                      position: latLng${index},
-                      map: map,
-                      title: "${obj.title}",
-                    });
-                    markers.push(marker${index});
-                    
-                    var infoWindow${index} = new google.maps.InfoWindow({
-                        content: "<b>${obj.title}</b><br/>${obj.description}"
-                    });
-                    infoWindows.push(infoWindow${index});
-                    
-                    marker${index}.addListener("click", function () {
-                        
-                      if (currentInfoWindow) {
-                        currentInfoWindow.close();
-                      }
-                      
-                      currentInfoWindow = infoWindow${index};
-                      infoWindow${index}.open({anchor: marker${index}, map});
-                      window.parent.postMessage(${index}, "*");
-                    });
-                    `
-                  )
-                  .join("")}
+                ${getMarkers()}
 
                 map.addListener("click", function () {
                   if (currentInfoWindow) {
@@ -182,7 +165,7 @@ export default function MapView({
 
                 window.addEventListener('message', function(event) {
                   // Always verify the origin
-                  // if (event.origin !== 'http://your-parent-window-origin') return;
+                  // if (event.origin !== 'http://your-parent-window-origin') return; 
                 
                   if (currentInfoWindow) currentInfoWindow.close();
                   if (event.data === -1) {

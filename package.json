@@ -30,7 +30,8 @@
   "homepage": "https://github.com/jmdoan1/expo-web-maps#readme",
   "dependencies": {
     "@types/react-native-maps": "^0.24.2",
-    "react-native-maps": "1.10.0"
+    "react-native-maps": "1.10.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.25",
