@@ -14,7 +14,7 @@ export default function MapView({
   customMapStyle,
   initialCamera,
   initialRegion,
-  kmlSrc, //???
+  kmlSrc,
   googleMapId, // Required if using markers, overrides customMapStyle
   loadingBackgroundColor,
   loadingEnabled,
@@ -48,7 +48,7 @@ export default function MapView({
   scrollDuringRotateOrZoomEnabled,
   scrollEnabled,
   showsBuildings,
-  showsCompass,
+  showsCompass, // Not supported
   showsIndoorLevelPicker,
   showsIndoors,
   showsMyLocationButton,
@@ -101,6 +101,25 @@ export default function MapView({
     return result;
   }, [children]);
 
+  const handleMessage = useCallback((event: MessageEvent) => {
+    switch (event.data.type) {
+      case "click":
+        if (onPress) onPress(event.data.payload);
+        break;
+      case "dblclick":
+        if (onDoublePress) onDoublePress(event.data.payload);
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [handleMessage]);
+
   return (
     <View
       style={[{ width: "100%", height: "100%", padding: 0 }, style]}
@@ -138,9 +157,31 @@ export default function MapView({
                   // fullscreenControl: false,
                   ${googleMapId ? `mapId: "${googleMapId}",` : ""}
                   ${(customMapStyle ?? []).length > 0 ? `styles: ${JSON.stringify(customMapStyle)},` : ""}
+                  ${maxZoomLevel !== undefined ? `maxZoom: "${maxZoomLevel}",` : ""}
+                  ${minZoomLevel !== undefined ? `minZoom: "${minZoomLevel}",` : ""}
                 });
 
                 ${mapType ? `map.setMapTypeId('${mapType}');` : ""}
+
+                ${
+                  kmlSrc
+                    ? `
+                const georssLayer = new google.maps.KmlLayer({
+                  url: "${kmlSrc}",
+                });
+              
+                georssLayer.setMap(map);`
+                    : ""
+                }
+
+                ${
+                  showsTraffic
+                    ? `
+                const trafficLayer = new google.maps.TrafficLayer();
+                trafficLayer.setMap(map);
+                `
+                    : ""
+                }
 
                 const bounds = new google.maps.LatLngBounds();
 
@@ -149,10 +190,56 @@ export default function MapView({
 
                 ${getMarkers()}
 
-                map.addListener("click", function () {
+                let isDoubleClick = false;
+                let debounceDelay = 2500;
+
+                function debounce(fn, delay) {
+                  let timeoutID = null;
+                  return function(...args) {
+                      clearTimeout(timeoutID);
+                      timeoutID = setTimeout(() => fn.apply(this, args), delay);
+                  };
+                }
+
+                function handleClick(event) {
+                  if (isDoubleClick) {
+                    return;
+                  }
+
                   if (currentInfoWindow) {
                     currentInfoWindow.close();
                   }
+                  window.parent.postMessage({
+                    type: "click", 
+                    payload: {
+                      cordinate: {
+                        latitude: event.latLng.lat(), 
+                        longitude: event.latLng.lng()
+                      }, 
+                      position: event.pixel}
+                    }, "*");
+                }
+
+                const debounceClick = debounce(handleClick, debounceDelay);
+
+                map.addListener("click", debounceClick);
+
+                map.addListener("dblclick", function (event) {
+                  isDoubleClick = true;
+
+                  window.parent.postMessage({
+                    type: "dblclick", 
+                    payload: {
+                      cordinate: {
+                        latitude: event.latLng.lat(), 
+                        longitude: event.latLng.lng()
+                      }, 
+                      position: event.pixel}
+                    }, "*");
+
+                    setTimeout(() => {
+                      isDoubleClick = false;
+                    }, debounceDelay + 1);
                 });
 
                 map.addListener("tilesloaded", function () {

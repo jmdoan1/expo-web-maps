@@ -21,6 +21,8 @@ export default function App() {
         }}
         provider="google"
         // mapType="hybrid"
+        onPress={(data) => console.log("DATA:", data)}
+        onDoublePress={(data) => console.log("DOUBLE DATA:", data)}
       >
         <MapMarker
           id="1"
