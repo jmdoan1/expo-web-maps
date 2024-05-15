@@ -1,10 +1,16 @@
 import Constants from "expo-constants";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import { LatLng, MapViewProps } from "react-native-maps";
+import {
+  KmlMapEvent,
+  KmlMarker,
+  LatLng,
+  MapViewProps,
+} from "react-native-maps";
 
 import { getMapMarkerString } from "../../Util/ComponentStrings";
 import { getZoomFromDelta } from "../../Util/ZoomDelta";
+import mapFunctions from "../../Util/MapFunctions";
 
 export default function MapView({
   style,
@@ -28,7 +34,7 @@ export default function MapView({
   onDoublePress,
   onIndoorBuildingFocused,
   onIndoorLevelActivated,
-  onKmlReady,
+  onKmlReady, // partially supported (does not return KMLEvent)
   onLongPress,
   onMapLoaded,
   onMapReady,
@@ -54,10 +60,12 @@ export default function MapView({
   showsMyLocationButton,
   showsTraffic, // iOS only maybe
   showsUserLocation,
-  zoomControlEnabled,
+  zoomControlEnabled = true,
   zoomEnabled,
   zoomTapEnabled,
-}: MapViewProps) {
+}: Omit<MapViewProps, "onKmlReady"> & {
+  onKmlReady?: (event?: KmlMapEvent) => void;
+}) {
   const [height, setHeight] = useState(0);
   const [center, setCenter] = useState<LatLng | undefined>();
   const [heading, setHeading] = useState<number | undefined>();
@@ -109,6 +117,8 @@ export default function MapView({
       case "dblclick":
         if (onDoublePress) onDoublePress(event.data.payload);
         break;
+      case "kmlReady":
+        if (onKmlReady) onKmlReady();
     }
   }, []);
 
@@ -144,6 +154,8 @@ export default function MapView({
                 const { Map } = await google.maps.importLibrary("maps");
                 const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
+                ${mapFunctions}
+
                 var map = new Map(document.getElementById("map"), {
                   ${
                     center
@@ -151,6 +163,7 @@ export default function MapView({
                       : ""
                   }
                   zoom: ${zoom ?? 5},
+                  zoomControl: ${zoomControlEnabled},
                   ${heading !== undefined ? `heading: ${-360 + heading},` : ""}
                   ${altitude !== undefined ? `altitude: ${altitude},` : ""}
                   ${pitch !== undefined ? `tilt: ${pitch},` : ""}
@@ -166,11 +179,24 @@ export default function MapView({
                 ${
                   kmlSrc
                     ? `
-                const georssLayer = new google.maps.KmlLayer({
+                const kmlLayer = new google.maps.KmlLayer({
                   url: "${kmlSrc}",
                 });
               
-                georssLayer.setMap(map);`
+                kmlLayer.setMap(map);
+                
+                ${
+                  onKmlReady
+                    ? `
+                    google.maps.event.addListener(kmlLayer, 'status_changed', function() {
+                      window.parent.postMessage({
+                        type: "kmlReady",
+                      }, "*");
+                    });`
+                    : ""
+                }
+                
+                `
                     : ""
                 }
 
@@ -184,8 +210,7 @@ export default function MapView({
                 }
 
                 const bounds = new google.maps.LatLngBounds();
-
-                // var markers = [];
+                
                 var infoWindows = [];
 
                 ${getMarkers()}
@@ -212,12 +237,10 @@ export default function MapView({
                   window.parent.postMessage({
                     type: "click", 
                     payload: {
-                      cordinate: {
-                        latitude: event.latLng.lat(), 
-                        longitude: event.latLng.lng()
-                      }, 
-                      position: event.pixel}
-                    }, "*");
+                      coordinate: getLatLng(event.latLng),
+                      position: event.pixel
+                    }
+                  }, "*");
                 }
 
                 const debounceClick = debounce(handleClick, debounceDelay);
@@ -230,16 +253,14 @@ export default function MapView({
                   window.parent.postMessage({
                     type: "dblclick", 
                     payload: {
-                      cordinate: {
-                        latitude: event.latLng.lat(), 
-                        longitude: event.latLng.lng()
-                      }, 
-                      position: event.pixel}
-                    }, "*");
+                      coordinate: getLatLng(event.latLng), 
+                      position: event.pixel
+                    }
+                  }, "*");
 
-                    setTimeout(() => {
-                      isDoubleClick = false;
-                    }, debounceDelay + 1);
+                  setTimeout(() => {
+                    isDoubleClick = false;
+                  }, debounceDelay + 1);
                 });
 
                 map.addListener("tilesloaded", function () {
