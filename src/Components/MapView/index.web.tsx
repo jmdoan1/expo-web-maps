@@ -1,32 +1,26 @@
 import Constants from "expo-constants";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import {
-  KmlMapEvent,
-  KmlMarker,
-  LatLng,
-  MapViewProps,
-} from "react-native-maps";
+import { KmlMapEvent, LatLng } from "react-native-maps";
 
+import { MapViewProps } from "./MapViewProps";
 import { getMapMarkerString } from "../../Util/ComponentStrings";
-import { getZoomFromDelta } from "../../Util/ZoomDelta";
+import emptyEvent from "../../Util/EmptyEvent";
 import mapFunctions from "../../Util/MapFunctions";
+import { getZoomFromDelta } from "../../Util/ZoomDelta";
 
 export default function MapView({
   style,
   camera,
   children,
-  compassOffset,
   customMapStyle,
   initialCamera,
   initialRegion,
   kmlSrc,
   googleMapId, // Required if using markers, overrides customMapStyle
   loadingBackgroundColor,
-  loadingEnabled,
-  loadingIndicatorColor,
   mapPadding,
-  mapType,
+  mapTypeWeb,
   maxZoomLevel,
   minZoomLevel,
   moveOnMarkerPress,
@@ -50,6 +44,7 @@ export default function MapView({
   onUserLocationChange,
   pitchEnabled,
   region,
+  renderingType = "RASTER",
   rotateEnabled,
   scrollDuringRotateOrZoomEnabled,
   scrollEnabled,
@@ -118,7 +113,12 @@ export default function MapView({
         if (onDoublePress) onDoublePress(event.data.payload);
         break;
       case "kmlReady":
-        if (onKmlReady) onKmlReady();
+        if (onKmlReady)
+          onKmlReady({ ...emptyEvent, nativeEvent: { markers: [] } });
+        break;
+      case "mapLoaded":
+        if (onMapLoaded) onMapLoaded(emptyEvent);
+        break;
     }
   }, []);
 
@@ -151,12 +151,13 @@ export default function MapView({
               var currentInfoWindow = null;
 
               async function initMap() {
-                const { Map } = await google.maps.importLibrary("maps");
+                const { Map, RenderingType } = await google.maps.importLibrary("maps");
                 const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
                 ${mapFunctions}
 
                 var map = new Map(document.getElementById("map"), {
+                  renderingType: RenderingType.${renderingType},
                   ${
                     center
                       ? `center: { lat: ${center.latitude}, lng: ${center.longitude} },`
@@ -172,9 +173,10 @@ export default function MapView({
                   ${(customMapStyle ?? []).length > 0 ? `styles: ${JSON.stringify(customMapStyle)},` : ""}
                   ${maxZoomLevel !== undefined ? `maxZoom: "${maxZoomLevel}",` : ""}
                   ${minZoomLevel !== undefined ? `minZoom: "${minZoomLevel}",` : ""}
+                  ${loadingBackgroundColor !== undefined ? `backgroundColor: "${loadingBackgroundColor}",` : ""}
                 });
 
-                ${mapType ? `map.setMapTypeId('${mapType}');` : ""}
+                ${mapTypeWeb ? `map.setMapTypeId('${mapTypeWeb}');` : ""}
 
                 ${
                   kmlSrc
@@ -264,7 +266,7 @@ export default function MapView({
                 });
 
                 map.addListener("tilesloaded", function () {
-                  window.parent.postMessage("initialInfoWindow", "*");
+                  window.parent.postMessage("mapLoaded", "*");
                 });
                 
                 // map.fitBounds(bounds);

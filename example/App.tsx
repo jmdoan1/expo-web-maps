@@ -20,7 +20,8 @@ export default function App() {
           zoom: 16,
         }}
         provider="google"
-        // mapType="hybrid"
+        mapTypeWeb="roadmap"
+        renderingType="VECTOR"
         onPress={(data) => console.log("DATA:", data)}
         onDoublePress={(data) => console.log("DOUBLE DATA:", data)}
       >
@@ -30,8 +31,8 @@ export default function App() {
             latitude: 30.3322,
             longitude: -81.6557,
           }}
-          title="Broseph"
-          // description="wassup"
+          title="Wassup"
+          description="bro"
         >
           <Callout>
             <ScrollView
@@ -72,7 +73,7 @@ export default function App() {
             longitude: -81.655,
           }}
           title="Wassup"
-          // description="bro"
+          description="bro"
         />
       </MapView>
     </View>

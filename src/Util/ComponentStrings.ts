@@ -13,8 +13,7 @@ type ChildType =
   | undefined;
 
 export function getMapMarkerString(marker: ChildType, index: number) {
-  let result = "";
-  if (!marker) return result;
+  if (!marker) return "";
 
   const {
     anchor,
