@@ -65,7 +65,7 @@ export type MapViewProps = ViewProps & {
    *
    * @platform iOS: Google Maps only
    * @platform Android: Supported
-   * @platform Web: Supported
+   * @platform Web: Supported (Do not use if using `Marker` components)
    */
   customMapStyle?: MapStyleElement[];
   /**
