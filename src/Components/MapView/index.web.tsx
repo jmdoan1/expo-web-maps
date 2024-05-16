@@ -18,11 +18,11 @@ export default function MapView({
   initialRegion,
   kmlSrc,
   googleMapId, // Required if using markers, overrides customMapStyle
-  loadingBackgroundColor,
+  loadingBackgroundColor = "#FFFFFF",
   mapPadding,
   mapTypeWeb,
-  maxZoomLevel,
-  minZoomLevel,
+  maxZoomLevel = 20,
+  minZoomLevel = 0,
   moveOnMarkerPress,
   onCalloutPress,
   onDoublePress,
@@ -53,10 +53,10 @@ export default function MapView({
   showsIndoorLevelPicker,
   showsIndoors,
   showsMyLocationButton,
-  showsTraffic, // iOS only maybe
+  showsTraffic,
   showsUserLocation,
   zoomControlEnabled = true,
-  zoomEnabled,
+  zoomEnabled = true,
   zoomTapEnabled,
 }: Omit<MapViewProps, "onKmlReady"> & {
   onKmlReady?: (event?: KmlMapEvent) => void;

@@ -196,7 +196,6 @@ export type MapViewProps = ViewProps & {
   /**
    * The map type to be displayed
    *
-   * @default `standard`
    * @platform iOS: Not supported
    * @platform Android: Not supported
    * @platform Web: hybrid | roadmap | satellite | terrain
